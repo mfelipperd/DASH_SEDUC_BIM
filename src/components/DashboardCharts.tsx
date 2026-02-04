@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,27 +25,51 @@ ChartJS.register(
   ArcElement
 );
 
-const THEME = {
-  brand900: "#233952",
-  brand600: "#4b709d",
-  brand400: "#6c819e",
-  accent: "#e5d0b7",
-  ticks: "rgba(255,255,255,.78)",
-  grid: "rgba(255,255,255,.08)",
-  legend: "rgba(255,255,255,.86)",
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  "Pendente": THEME.accent,
-  "Em andamento": THEME.brand600,
-  "Concluído": "rgba(127,191,155,.95)",
-};
-
 interface Props {
   data: DashboardRow[];
 }
 
 export default function DashboardCharts({ data }: Props) {
+  const [colors, setColors] = useState({
+    brand600: "#4b709d",
+    brand400: "#6c819e",
+    brandSecondary: "#6c819e",
+    accent: "#e5d0b7",
+    ok: "#7fbf9b",
+    text: "#ffffff",
+    muted: "rgba(255,255,255,0.7)",
+    line: "rgba(255,255,255,0.1)",
+  });
+
+  useEffect(() => {
+    const updateColors = () => {
+      const style = getComputedStyle(document.documentElement);
+      setColors({
+        brand600: style.getPropertyValue("--brand-600").trim(),
+        brand400: style.getPropertyValue("--brand-400").trim(),
+        brandSecondary: style.getPropertyValue("--brand-secondary").trim(),
+        accent: style.getPropertyValue("--accent").trim(),
+        ok: style.getPropertyValue("--ok").trim(),
+        text: style.getPropertyValue("--text").trim(),
+        muted: style.getPropertyValue("--muted").trim(),
+        line: style.getPropertyValue("--line").trim(),
+      });
+    };
+
+    updateColors();
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((m) => {
+        if (m.attributeName === "data-theme") {
+          updateColors();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
+
   const tasks = data.filter((r) => r.tipo === "Tarefa");
 
   // 1) Status Chart
@@ -56,7 +80,7 @@ export default function DashboardCharts({ data }: Props) {
     labels: statusOrder,
     datasets: [{
       data: statusCounts,
-      backgroundColor: statusOrder.map(s => STATUS_COLORS[s] || THEME.brand400),
+      backgroundColor: [colors.accent, colors.brand600, colors.ok],
       borderRadius: 4,
     }]
   };
@@ -70,8 +94,8 @@ export default function DashboardCharts({ data }: Props) {
     labels: ["Medido", "Saldo"],
     datasets: [{
       data: [totalMedido / 100, saldo / 100],
-      backgroundColor: [THEME.brand600, THEME.accent],
-      borderColor: "rgba(255,255,255,.14)",
+      backgroundColor: [colors.brand600, colors.brandSecondary],
+      borderColor: colors.line,
       borderWidth: 1,
     }]
   };
@@ -90,8 +114,8 @@ export default function DashboardCharts({ data }: Props) {
   const categoryData = {
     labels: catLabels,
     datasets: [
-      { label: "Contratual", data: catLabels.map(k => byCat.get(k)!.vc / 100), backgroundColor: "rgba(75,112,157,.70)" },
-      { label: "Medido", data: catLabels.map(k => byCat.get(k)!.vm / 100), backgroundColor: "rgba(229,208,183,.75)" },
+      { label: "Contratual", data: catLabels.map(k => byCat.get(k)!.vc / 100), backgroundColor: colors.brandSecondary },
+      { label: "Medido", data: catLabels.map(k => byCat.get(k)!.vm / 100), backgroundColor: colors.brand600 },
     ]
   };
 
@@ -112,8 +136,8 @@ export default function DashboardCharts({ data }: Props) {
     datasets: [{
       label: "Saldo (Contratual − Medido)",
       data: topSchools.map(([, v]) => v / 100),
-      backgroundColor: "rgba(108,129,158,.70)",
-      borderColor: THEME.brand400,
+      backgroundColor: colors.brand400,
+      borderColor: colors.line,
       borderWidth: 1,
     }]
   };
@@ -122,11 +146,11 @@ export default function DashboardCharts({ data }: Props) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { labels: { color: THEME.legend } },
+      legend: { labels: { color: colors.text } },
     },
     scales: {
-      x: { ticks: { color: THEME.ticks }, grid: { color: "rgba(255,255,255,.04)" } },
-      y: { ticks: { color: THEME.ticks }, grid: { color: THEME.grid } },
+      x: { ticks: { color: colors.muted }, grid: { color: colors.line } },
+      y: { ticks: { color: colors.muted }, grid: { color: colors.line } },
     }
   };
 

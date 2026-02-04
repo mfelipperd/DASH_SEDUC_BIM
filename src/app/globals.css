@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  /* Base (empresa) */
+  /* Global Constants */
+  --white: #ffffff;
+  --black: #000000;
+  
+  /* Theme Variables (Default Values) */
   --brand-900: #233952;
   --brand-600: #4b709d;
   --brand-400: #6c819e;
   --accent: #e5d0b7;
-  --white: #ffffff;
-  --black: #000000;
-
-  /* Derivados */
+  
   --bg: #0b1220;
+  --header-bg: rgba(11, 18, 32, 0.86);
   --card: rgba(255, 255, 255, 0.06);
   --card2: rgba(255, 255, 255, 0.03);
   --text: #ffffff;
@@ -19,10 +21,65 @@
   --line: rgba(255, 255, 255, 0.1);
   --shadow: rgba(0, 0, 0, 0.35);
 
+  --input-bg: rgba(35, 57, 82, 0.45);
+  --btn-grad-start: rgba(75, 112, 157, 0.92);
+  --btn-grad-end: rgba(35, 57, 82, 0.92);
+
   /* Status */
   --ok: #7fbf9b;
   --warn: var(--accent);
   --bad: #d88b8b;
+
+  --th-bg: rgba(35, 57, 82, 0.55);
+  --bar-start: rgba(75, 112, 157, 0.95);
+  --bar-end: rgba(229, 208, 183, 0.95);
+  --brand-secondary: #6c819e;
+
+  --bg-glow-1: rgba(75, 112, 157, 0.15);
+  --bg-glow-2: rgba(229, 208, 183, 0.08);
+  --bg-top: #070a12;
+
+  /* shadcn/ui essentials */
+  --popover: var(--bg);
+  --popover-foreground: var(--text);
+  --border: var(--line);
+}
+
+/* Theme: Encibra */
+[data-theme='encibra'] {
+  --brand-900: #1a1a1a;
+  --brand-600: #f2bc1b;
+  --brand-400: #d4a517;
+  --accent: #f2bc1b;
+  --brand-secondary: #ff8c00; /* Secondary Orange */
+  
+  --bg: #121212;
+  --header-bg: rgba(18, 18, 18, 0.9);
+  --input-bg: rgba(40, 40, 40, 0.6);
+  --btn-grad-start: #f2bc1b;
+  --btn-grad-end: #d4a517;
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.7);
+  --line: rgba(255, 255, 255, 0.12);
+  
+  /* In Encibra theme, buttons text should be dark for contrast with gold */
+  --btn-text: #000000;
+  --th-bg: rgba(115, 86, 0, 0.9);
+  --bar-start: #f2bc1b;
+  --bar-end: #ff8c00;
+
+  --bg-glow-1: rgba(242, 188, 27, 0.12);
+  --bg-glow-2: rgba(255, 140, 0, 0.08);
+  --bg-top: #1a1a1a;
+
+  /* shadcn/ui essentials */
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+}
+
+/* Default button text color fallback */
+:root {
+  --btn-text: #ffffff;
 }
 
 * {
@@ -31,12 +88,13 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial, sans-serif;
   color: var(--text);
-  background: radial-gradient(1200px 700px at 18% 0%, rgba(75, 112, 157, 0.22), transparent 60%),
-    radial-gradient(900px 520px at 88% 12%, rgba(229, 208, 183, 0.14), transparent 55%),
-    linear-gradient(180deg, #070a12 0%, var(--bg) 100%);
+  background: radial-gradient(1200px 700px at 18% 0%, var(--bg-glow-1), transparent 60%),
+    radial-gradient(900px 520px at 88% 12%, var(--bg-glow-2), transparent 55%),
+    linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 100%);
   min-height: 100vh;
+  transition: all 0.4s ease;
 }
 
 /* Custom Scrollbar */
@@ -66,9 +124,10 @@ header {
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
-  background: rgba(11, 18, 32, 0.86);
+  background: var(--header-bg);
   backdrop-filter: blur(10px);
   z-index: 5;
+  transition: background 0.3s ease;
 }
 
 .topbar {
@@ -212,7 +271,7 @@ select,
 input[type="file"],
 input[type="search"],
 input[type="text"] {
-  background: rgba(35, 57, 82, 0.45);
+  background: var(--input-bg);
   border: 1px solid var(--line);
   color: var(--text);
   border-radius: 12px;
@@ -220,26 +279,26 @@ input[type="text"] {
   font-size: 12px;
   outline: none;
   min-width: 220px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
 }
 input[type="search"] {
   min-width: 320px;
 }
 select:focus,
 input:focus {
-  border-color: rgba(229, 208, 183, 0.55);
-  box-shadow: 0 0 0 4px rgba(229, 208, 183, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(242, 188, 27, 0.15);
 }
 
 button {
-  background: linear-gradient(180deg, rgba(75, 112, 157, 0.92), rgba(35, 57, 82, 0.92));
+  background: linear-gradient(180deg, var(--btn-grad-start), var(--btn-grad-end));
   border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text);
+  color: var(--btn-text);
   border-radius: 12px;
   padding: 10px 12px;
   font-weight: 900;
   cursor: pointer;
-  transition: transform 0.06s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.15s ease;
 }
 button:hover {
   filter: brightness(1.06);
@@ -286,8 +345,9 @@ th {
   text-align: left;
   position: sticky;
   top: 0;
-  background: rgba(35, 57, 82, 0.55);
+  background: var(--th-bg);
   backdrop-filter: blur(8px);
+  transition: background 0.3s ease;
 }
 tbody tr:hover {
   background: rgba(255, 255, 255, 0.03);
@@ -309,14 +369,17 @@ tbody tr:hover {
   border-radius: 999px;
   background: var(--brand-400);
 }
+.b-ok { color: var(--ok); }
 .b-ok .dot {
   background: var(--ok);
 }
+.b-warn { color: var(--warn); }
 .b-warn .dot {
-  background: var(--brand-600);
+  background: var(--warn);
 }
+.b-bad { color: var(--bad); }
 .b-bad .dot {
-  background: var(--accent);
+  background: var(--bad);
 }
 
 .progress {
@@ -332,7 +395,7 @@ tbody tr:hover {
 .bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, rgba(75, 112, 157, 0.95) 0%, rgba(229, 208, 183, 0.95) 100%);
+  background: linear-gradient(90deg, var(--bar-start) 0%, var(--bar-end) 100%);
 }
 
 .note {
