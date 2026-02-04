@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#233952" />
+  <title>Dashboard – Acompanhamento de Contrato (Jira → CSV)</title>
+
+  <!-- IMPORTANTE: este arquivo deve estar no mesmo diretório do index.html -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <h1>Dashboard – Acompanhamento de Contrato (Jira → CSV)</h1>
+        <p class="sub">
+          <span class="pill" id="lastUpdate">Sem dados carregados</span>
+          <span class="pill" id="rowsInfo">0 linhas</span>
+          <span class="pill" id="tasksInfo">0 tarefas</span>
+          <span class="pill" id="subtasksInfo">0 subtarefas</span>
+        </p>
+      </div>
+
+      <div class="brandMark">
+        <span class="dot"></span>
+        <span class="brandText">SEDUC BIM</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="panel">
+      <div class="controls">
+        <div class="control">
+          <label>Carregar CSV (exportado do Jira)</label>
+          <input id="fileInput" type="file" accept=".csv,text/csv" />
+        </div>
+
+        <div class="control grow">
+          <label>Ou buscar automaticamente (no mesmo servidor)</label>
+          <div class="inline">
+            <input id="autoUrl" class="grow" type="search" value="./dados.csv" />
+            <button id="btnFetch">Carregar do caminho</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="sep" />
+
+      <div class="controls">
+        <div class="control">
+          <label>Filtro – Categoria (Etapa)</label>
+          <select id="fCategoria"><option value="">Todas</option></select>
+        </div>
+
+        <div class="control">
+          <label>Filtro – Escola</label>
+          <select id="fEscola"><option value="">Todas</option></select>
+        </div>
+
+        <div class="control">
+          <label>Filtro – Status normalizado</label>
+          <select id="fStatus">
+            <option value="">Todos</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Concluído">Concluído</option>
+          </select>
+        </div>
+
+        <div class="control grow">
+          <label>Busca (Chave/Resumo)</label>
+          <input id="q" class="grow" type="search" placeholder="Ex.: PA-198, SILVESTRE, A2..." />
+        </div>
+
+        <div class="control">
+          <label>&nbsp;</label>
+          <button class="btnGhost" id="btnClear">Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid kpis mt12">
+      <div class="kpi">
+        <div class="label">Valor Contratual (Tarefas)</div>
+        <div class="value" id="kContratual">R$ 0,00</div>
+        <div class="hint" id="kContratualHint">Somatório das tarefas filtradas</div>
+      </div>
+
+      <div class="kpi">
+        <div class="label">Valor Medido (Tarefas)</div>
+        <div class="value" id="kMedido">R$ 0,00</div>
+        <div class="hint" id="kMedidoHint">Somatório das tarefas filtradas</div>
+      </div>
+
+      <div class="kpi">
+        <div class="label">Saldo a Receber (Concluídas)</div>
+        <div class="value" id="kSaldo">R$ 0,00</div>
+        <div class="hint" id="kSaldoHint">Apenas Concluído/Aprovado/Em Análise (SEDUC)</div>
+      </div>
+
+      <div class="kpi">
+        <div class="label">% Medido (Tarefas)</div>
+        <div class="value" id="kPct">0%</div>
+        <div class="hint">(Valor Medido ÷ Valor Contratual)</div>
+      </div>
+    </div>
+
+    <div class="grid charts mt12">
+      <div class="panel chartPanel">
+        <div class="chartHead">Status das Tarefas</div>
+        <div class="chartSub muted">Distribuição por status (após filtros)</div>
+        <div class="chartBody"><canvas id="chartStatus"></canvas></div>
+      </div>
+
+      <div class="panel chartPanel">
+        <div class="chartHead">Financeiro</div>
+        <div class="chartSub muted">Medido x Saldo estimado (Contratual − Medido)</div>
+        <div class="chartBody"><canvas id="chartFinance"></canvas></div>
+      </div>
+
+      <div class="panel chartPanel spanFull">
+        <div class="chartHead">Por Categoria (Etapa)</div>
+        <div class="chartSub muted">Contratual x Medido (somente Tarefas)</div>
+        <div class="chartBody tall"><canvas id="chartCategoria"></canvas></div>
+      </div>
+
+      <div class="panel chartPanel spanFull">
+        <div class="chartHead">Top 10 Escolas</div>
+        <div class="chartSub muted">Saldo (Contratual − Medido) — maior para menor</div>
+        <div class="chartBody tall"><canvas id="chartEscolaSaldo"></canvas></div>
+      </div>
+    </div>
+
+    <div class="row mt12">
+      <div class="panel">
+        <div class="between">
+          <div>
+            <div class="title">Progresso de Entregáveis (subtarefas) – por tarefa</div>
+            <div class="muted small">
+              Calculado a partir das subtarefas vinculadas ao <b>Pai/Chave pai</b>.
+            </div>
+          </div>
+          <div class="muted small" id="entregaveisInfo"></div>
+        </div>
+
+        <div class="mt10">
+          <div class="between">
+            <div class="muted small" id="entregaveisFinanceInfo">Equivalência estimada (entregáveis → financeiro): —</div>
+            <div class="muted small" id="entregaveisPctInfo">—</div>
+          </div>
+          <div class="progress big mt8">
+            <div class="bar" id="entregaveisBar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="scroll max430 mt10">
+          <table>
+            <thead>
+              <tr>
+                <th class="w90">Chave</th>
+                <th class="w220">Tarefa (Etapa/Escola)</th>
+                <th>Categoria</th>
+                <th>Escola</th>
+                <th>Status</th>
+                <th class="w150">Entregáveis</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyEntregaveis"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="title">Regras aplicadas</div>
+        <div class="note mt8">
+          <ul class="rules">
+            <li><b>Status normalizado</b>:
+              <ul>
+                <li>“Tarefas pendentes” → <b>Pendente</b></li>
+                <li>“Em andamento” ou “Em Análise (interna)” → <b>Em andamento</b></li>
+                <li>“Concluído” ou “Aprovado” ou “Em Análise (SEDUC)” → <b>Concluído</b></li>
+              </ul>
+            </li>
+            <li><b>Saldo a Receber</b> (somente tarefas concluídas): <b>Valor Contratual − Valor Medido</b></li>
+            <li><b>Financeiro</b>: soma apenas <b>Tarefas</b>. Subtarefas entram só no progresso.</li>
+            <li><b>Equivalência (entregáveis → financeiro)</b>: soma ponderada por valor, usando % de subtarefas concluídas por tarefa.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel mt12">
+      <div class="between">
+        <div>
+          <div class="title">Lista de Tarefas (produtos medidos)</div>
+          <div class="muted small">Substitua o CSV e recarregue.</div>
+        </div>
+        <div class="muted small" id="tasksTableInfo"></div>
+      </div>
+
+      <div class="scroll max520 mt10">
+        <table>
+          <thead>
+            <tr>
+              <th class="w90">Chave</th>
+              <th class="w260">Resumo</th>
+              <th>Categoria</th>
+              <th>Escola</th>
+              <th>Status</th>
+              <th class="w140">Contratual</th>
+              <th class="w130">Medido</th>
+              <th class="w140">Saldo (se concluída)</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyTasks"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
