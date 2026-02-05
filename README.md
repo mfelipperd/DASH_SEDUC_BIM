@@ -15,6 +15,19 @@ Este é um projeto **Next.js 16** desenvolvido para a **Encibra**, com o objetiv
 
 ---
 
+## 🏛️ Arquitetura do Projeto
+
+O projeto adota uma **Arquitetura Baseada em Componentes e Serviços (Service-Oriented Component Architecture)**, aproveitando os recursos modernos do Next.js App Router para garantir separação de responsabilidades e escalabilidade:
+
+-   **Modularidade de Interface**: Os componentes são divididos entre componentes de base (em `ui/`) e componentes de funcionalidade (como tabelas e gráficos), facilitando a reutilização e manutenção.
+-   **Separation of Concerns (SoC)**:
+    -   **Camada de Visualização**: Focada em React e processamento de estado via hooks padrão.
+    -   **Camada de Processamento (Utils)**: Lógica complexa de manipulação de CSV e cálculos financeiros isolada do ciclo de vida dos componentes.
+    -   **Camada de Serviço (Backend/API)**: Abstração de chamadas à AWS S3 via API Routes, protegendo credenciais e simplificando o consumo pelo frontend.
+-   **Design System Variável**: Arquitetura de estilos baseada em **Variáveis CSS** e **Tailwind 4**, permitindo a troca dinâmica de temas (como o tema Encibra) sem alteração na estrutura do código.
+
+---
+
 ## 📋 Funcionalidades Principais
 
 - **📊 Gestão de KPIs**: Visualização em tempo real do Valor Contratual Total, Valor Medido e Saldo a Receber.
