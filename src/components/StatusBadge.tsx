@@ -9,7 +9,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
     status === "Concluído" ? "b-ok" :
     status === "Em andamento" ? "b-warn" :
     status === "Pendente" ? "b-bad" : "";
-    
+
   return (
     <span className={`badge ${cls}`}>
       <span className="dot"></span>

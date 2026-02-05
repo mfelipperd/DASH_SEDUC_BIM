@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Papa from "papaparse";
-import { 
-  DashboardRow, 
-  COL, 
-  normalizeStatus, 
-  toCents, 
+import {
+  DashboardRow,
+  COL,
+  normalizeStatus,
+  toCents,
   uniqSorted,
-  moneyBR 
+  moneyBR
 } from "@/utils/dashboard-helpers";
 import KPIContainer from "./KPIContainer";
 import DashboardCharts from "./DashboardCharts";
@@ -24,7 +24,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [sourceLabel, setSourceLabel] = useState("Nenhum arquivo selecionado");
 
-  // Filter states
+
   const [filters, setFilters] = useState({
     categoria: "",
     escola: "",
@@ -32,7 +32,7 @@ export default function Dashboard() {
     query: "",
   });
 
-  // Load CSV data from S3
+
   const loadCSVS3 = async (key: string) => {
     setLoading(true);
     try {
@@ -48,7 +48,7 @@ export default function Dashboard() {
     }
   };
 
-  // Load CSV data from local file
+
   const loadCSVLocal = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -66,7 +66,7 @@ export default function Dashboard() {
     reader.readAsText(file);
   };
 
-  // Load Example CSV from public folder
+
   const loadExampleCSV = async () => {
     setLoading(true);
     try {
@@ -106,7 +106,7 @@ export default function Dashboard() {
     });
   };
 
-  // Filtered data
+
   const filteredData = useMemo(() => {
     return rawData.filter((r) => {
       if (filters.categoria && r.categoria !== filters.categoria) return false;
@@ -121,7 +121,7 @@ export default function Dashboard() {
     });
   }, [rawData, filters]);
 
-  // Derived options for filters
+
   const categories = useMemo(() => uniqSorted(rawData.map((r) => r.categoria)), [rawData]);
   const schools = useMemo(() => uniqSorted(rawData.map((r) => r.escola)), [rawData]);
 
@@ -130,7 +130,7 @@ export default function Dashboard() {
       <Panel>
         <div className="controls">
           <S3Selector onSelect={loadCSVS3} selectedKey={selectedFile} onFileChange={setSelectedFile} />
-          
+
           <div className="control">
             <label>CSV de Exemplo / Local</label>
             <div className="inline">
@@ -139,14 +139,14 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        
+
         <hr className="sep" />
 
-        <FilterControls 
-          filters={filters} 
-          setFilters={setFilters} 
-          categories={categories} 
-          schools={schools} 
+        <FilterControls
+          filters={filters}
+          setFilters={setFilters}
+          categories={categories}
+          schools={schools}
         />
       </Panel>
 
@@ -160,12 +160,12 @@ export default function Dashboard() {
       </div>
 
       <KPIContainer data={filteredData} />
-      
+
       <DashboardCharts data={filteredData} />
 
       <div className="row mt12">
         <EntregaveisTable data={filteredData} />
-        
+
         <Panel>
           <div className="title">Regras aplicadas</div>
           <div className="note mt8">

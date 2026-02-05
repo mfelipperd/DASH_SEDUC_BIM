@@ -52,10 +52,10 @@ export default function UploadPage() {
           <form onSubmit={handleUpload} className="mt12">
             <div className="control">
               <label>Arquivo CSV</label>
-              <input 
-                type="file" 
-                accept=".csv" 
-                onChange={(e) => setFile(e.target.files?.[0] || null)} 
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
                 required
               />
             </div>

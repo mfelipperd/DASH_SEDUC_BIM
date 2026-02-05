@@ -26,7 +26,7 @@ export default function S3Selector({ onSelect, selectedKey, onFileChange }: Prop
         const data = await res.json();
         if (data.files) {
           setFiles(data.files);
-          // Auto-select first file if none selected
+
           if (data.files.length > 0 && !selectedKey) {
             onFileChange(data.files[0].key);
             onSelect(data.files[0].key);
@@ -46,10 +46,10 @@ export default function S3Selector({ onSelect, selectedKey, onFileChange }: Prop
     <div className="control grow">
       <label>Selecionar CSV do S3</label>
       <div className="inline">
-        <select 
-          id="s3File" 
-          className="grow" 
-          value={selectedKey} 
+        <select
+          id="s3File"
+          className="grow"
+          value={selectedKey}
           onChange={(e) => {
             const val = e.target.value;
             onFileChange(val);

@@ -9,11 +9,11 @@ export default function Header() {
       <div className="topbar">
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center" }}>
-            <Image 
-              src="/logo-white.svg" 
-              alt="Encibra Logo Light" 
-              width={140} 
-              height={30} 
+            <Image
+              src="/logo-white.svg"
+              alt="Encibra Logo Light"
+              width={140}
+              height={30}
               priority
               style={{ marginRight: "20px" }}
             />

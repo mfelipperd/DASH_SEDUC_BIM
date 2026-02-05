@@ -66,11 +66,11 @@ export default function FilterControls({ filters, setFilters, categories, school
 
       <div className="control grow">
         <label>Busca (Chave/Resumo)</label>
-        <input 
-          id="query" 
-          className="grow" 
-          type="search" 
-          placeholder="Ex.: PA-198, SILVESTRE, A2..." 
+        <input
+          id="query"
+          className="grow"
+          type="search"
+          placeholder="Ex.: PA-198, SILVESTRE, A2..."
           value={filters.query}
           onChange={handleChange}
         />

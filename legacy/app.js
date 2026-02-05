@@ -1,4 +1,4 @@
-// Dashboard – Acompanhamento de Contrato (Jira CSV)
+
 
 const THEME = {
   brand900: "#233952",
@@ -11,28 +11,28 @@ const THEME = {
   legend:   "rgba(255,255,255,.86)",
 };
 
-// Status (cores do gráfico)
+
 const STATUS_COLORS = {
   "Pendente": THEME.accent,
   "Em andamento": THEME.brand600,
-  "Concluído": "rgba(127,191,155,.95)", // complementar (suave)
+  "Concluído": "rgba(127,191,155,.95)",
 };
 
-// =============================
-// Utilitários
-// =============================
+
+
+
 const moneyBR = (cents) => {
   const v = Number.isFinite(cents) ? cents : 0;
   return (v / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 };
 
-// Converte string numérica para CENTAVOS (robusto p/ "R$ 5.368,12", "6009,557", etc.)
+
 function toCents(val) {
   if (val === null || val === undefined) return 0;
   let s = String(val).trim();
   if (!s) return 0;
 
-  // remove "R$" e espaços (inclui NBSP)
+
   s = s.replace(/R\$\s?/g, "");
   s = s.replace(/[\s\u00A0]/g, "");
   s = s.trim();
@@ -40,9 +40,9 @@ function toCents(val) {
   const hasComma = s.includes(",");
   const hasDot = s.includes(".");
 
-  // "5.368,12" -> "5368.12"
+
   if (hasComma && hasDot) s = s.replaceAll(".", "").replaceAll(",", ".");
-  // "5368,12" -> "5368.12"
+
   else if (hasComma && !hasDot) s = s.replaceAll(",", ".");
 
   const n = Number(s);
@@ -84,14 +84,14 @@ function badgeStatus(norm) {
   return `<span class="badge ${cls}"><span class="dot"></span>${escapeHtml(norm || "—")}</span>`;
 }
 
-// =============================
-// Testes rápidos (console)
-// =============================
+
+
+
 (function runSelfTests() {
   const cases = [
     { input: "R$ 5.368,12", expected: 536812 },
     { input: "5.368,12", expected: 536812 },
-    { input: "6009,557", expected: 600956 }, // arredonda
+    { input: "6009,557", expected: 600956 },
     { input: "6009.55", expected: 600955 },
     { input: "0", expected: 0 },
     { input: "", expected: 0 },
@@ -107,9 +107,9 @@ function badgeStatus(norm) {
   console.log(`[TESTES] toCents: ${ok}/${cases.length} OK`);
 })();
 
-// =============================
-// Estado
-// =============================
+
+
+
 let rawRows = [];
 
 const COL = {
@@ -126,9 +126,9 @@ const COL = {
 
 let chartStatus, chartFinance, chartCategoria, chartEscolaSaldo;
 
-// =============================
-// CSV
-// =============================
+
+
+
 function parseCsvText(text, sourceLabel) {
   const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
   if (parsed.errors?.length) console.warn("Erros CSV:", parsed.errors);
@@ -175,9 +175,9 @@ async function fetchCsv(url) {
   parseCsvText(await res.text(), url);
 }
 
-// =============================
-// Filtros (sem disciplina)
-// =============================
+
+
+
 function hydrateFilters() {
   const selCat = document.getElementById("fCategoria");
   const selEsc = document.getElementById("fEscola");
@@ -218,9 +218,9 @@ function applyFilters(rows) {
   });
 }
 
-// =============================
-// Render
-// =============================
+
+
+
 function render() {
   const filtered = applyFilters(rawRows);
   renderKPIs(filtered);
@@ -319,7 +319,7 @@ function renderEntregaveis(filtered) {
   document.getElementById("entregaveisInfo").textContent =
     `Entregáveis concluídos: ${conclEnt}/${totalEnt} (${pctEnt.toFixed(1)}%)`;
 
-  // Barra global + equivalência financeira estimada
+
   const barEl = document.getElementById("entregaveisBar");
   const pctEl = document.getElementById("entregaveisPctInfo");
   const finEl = document.getElementById("entregaveisFinanceInfo");
@@ -362,9 +362,9 @@ function renderEntregaveis(filtered) {
   }).join("");
 }
 
-// =============================
-// Charts (com paleta)
-// =============================
+
+
+
 function ensureCharts() {
   const elStatus = document.getElementById("chartStatus");
   const elFinance = document.getElementById("chartFinance");
@@ -372,7 +372,7 @@ function ensureCharts() {
   const elEsc = document.getElementById("chartEscolaSaldo");
   if (!elStatus || !elFinance || !elCat || !elEsc) return;
 
-  // 1) STATUS -> AGORA É GRÁFICO DE BARRAS
+
   if (!chartStatus) {
     chartStatus = new Chart(elStatus, {
       type: "bar",
@@ -409,7 +409,7 @@ function ensureCharts() {
     });
   }
 
-  // 2) FINANCEIRO (rosca continua)
+
   if (!chartFinance) {
     chartFinance = new Chart(elFinance, {
       type: "doughnut",
@@ -438,7 +438,7 @@ function ensureCharts() {
     });
   }
 
-  // 3) CATEGORIA (barras)
+
   if (!chartCategoria) {
     chartCategoria = new Chart(elCat, {
       type: "bar",
@@ -468,7 +468,7 @@ function ensureCharts() {
     });
   }
 
-  // 4) TOP ESCOLAS (saldo) horizontal
+
   if (!chartEscolaSaldo) {
     chartEscolaSaldo = new Chart(elEsc, {
       type: "bar",
@@ -507,7 +507,7 @@ function renderCharts(filtered) {
 
   const tasks = filtered.filter((r) => r.tipo === "Tarefa");
 
-  // STATUS
+
   const order = ["Pendente", "Em andamento", "Concluído"];
   const byStatus = new Map(order.map((s) => [s, 0]));
   for (const t of tasks) byStatus.set(t.statusNorm || "—", (byStatus.get(t.statusNorm || "—") || 0) + 1);
@@ -518,7 +518,7 @@ function renderCharts(filtered) {
   chartStatus.data.datasets[0].backgroundColor = order.map((s) => STATUS_COLORS[s] || THEME.brand400);
   chartStatus.update();
 
-  // FINANCEIRO
+
   const totalContratual = tasks.reduce((a, r) => a + (r.valorContratualCents || 0), 0);
   const totalMedido = tasks.reduce((a, r) => a + (r.valorMedidoCents || 0), 0);
   const saldo = Math.max(0, totalContratual - totalMedido);
@@ -526,7 +526,7 @@ function renderCharts(filtered) {
   chartFinance.data.datasets[0].data = [totalMedido / 100, saldo / 100];
   chartFinance.update();
 
-  // CATEGORIA
+
   const byCat = new Map();
   for (const t of tasks) {
     const k = t.categoria || "—";
@@ -541,7 +541,7 @@ function renderCharts(filtered) {
   chartCategoria.data.datasets[1].data = catLabels.map((k) => (byCat.get(k).vm || 0) / 100);
   chartCategoria.update();
 
-  // TOP 10 ESCOLAS (saldo)
+
   const byEsc = new Map();
   for (const t of tasks) {
     const k = t.escola || "—";
@@ -554,9 +554,9 @@ function renderCharts(filtered) {
   chartEscolaSaldo.update();
 }
 
-// =============================
-// Eventos
-// =============================
+
+
+
 document.getElementById("fileInput").addEventListener("change", (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
@@ -594,7 +594,7 @@ document.getElementById("btnClear").addEventListener("click", () => {
   render();
 });
 
-// Boot (tenta carregar ./dados.csv automaticamente)
+
 (async function boot() {
   try { await fetchCsv(document.getElementById("autoUrl").value); } catch (_) {}
 })();

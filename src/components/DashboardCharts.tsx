@@ -72,7 +72,7 @@ export default function DashboardCharts({ data }: Props) {
 
   const tasks = data.filter((r) => r.tipo === "Tarefa");
 
-  // 1) Status Chart
+
   const statusOrder = ["Pendente", "Em andamento", "Concluído"];
   const statusCounts = statusOrder.map(s => tasks.filter(t => t.statusNorm === s).length);
 
@@ -85,7 +85,7 @@ export default function DashboardCharts({ data }: Props) {
     }]
   };
 
-  // 2) Finance Chart
+
   const totalContratual = tasks.reduce((a, r) => a + r.valorContratualCents, 0);
   const totalMedido = tasks.reduce((a, r) => a + r.valorMedidoCents, 0);
   const saldo = Math.max(0, totalContratual - totalMedido);
@@ -100,7 +100,7 @@ export default function DashboardCharts({ data }: Props) {
     }]
   };
 
-  // 3) Category Chart
+
   const byCat = new Map<string, { vc: number, vm: number }>();
   tasks.forEach(t => {
     const k = t.categoria || "—";
@@ -119,7 +119,7 @@ export default function DashboardCharts({ data }: Props) {
     ]
   };
 
-  // 4) Top Schools Chart
+
   const byEsc = new Map<string, number>();
   tasks.forEach(t => {
     const k = t.escola || "—";

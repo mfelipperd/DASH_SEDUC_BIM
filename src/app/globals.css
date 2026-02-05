@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  /* Global Constants */
+
   --white: #ffffff;
   --black: #000000;
-  
-  /* Theme Variables (Default Values) */
+
+
   --brand-900: #233952;
   --brand-600: #4b709d;
   --brand-400: #6c819e;
   --accent: #e5d0b7;
-  
+
   --bg: #0b1220;
   --header-bg: rgba(11, 18, 32, 0.86);
   --card: rgba(255, 255, 255, 0.06);
@@ -25,7 +25,7 @@
   --btn-grad-start: rgba(75, 112, 157, 0.92);
   --btn-grad-end: rgba(35, 57, 82, 0.92);
 
-  /* Status */
+
   --ok: #7fbf9b;
   --warn: var(--accent);
   --bad: #d88b8b;
@@ -39,20 +39,20 @@
   --bg-glow-2: rgba(229, 208, 183, 0.08);
   --bg-top: #070a12;
 
-  /* shadcn/ui essentials */
+
   --popover: var(--bg);
   --popover-foreground: var(--text);
   --border: var(--line);
 }
 
-/* Theme: Encibra */
+
 [data-theme='encibra'] {
   --brand-900: #1a1a1a;
   --brand-600: #f2bc1b;
   --brand-400: #d4a517;
   --accent: #f2bc1b;
-  --brand-secondary: #ff8c00; /* Secondary Orange */
-  
+  --brand-secondary: #ff8c00;
+
   --bg: #121212;
   --header-bg: rgba(18, 18, 18, 0.9);
   --input-bg: rgba(40, 40, 40, 0.6);
@@ -61,8 +61,8 @@
   --text: #ffffff;
   --muted: rgba(255, 255, 255, 0.7);
   --line: rgba(255, 255, 255, 0.12);
-  
-  /* In Encibra theme, buttons text should be dark for contrast with gold */
+
+
   --btn-text: #000000;
   --th-bg: rgba(115, 86, 0, 0.9);
   --bar-start: #f2bc1b;
@@ -72,12 +72,12 @@
   --bg-glow-2: rgba(255, 140, 0, 0.08);
   --bg-top: #1a1a1a;
 
-  /* shadcn/ui essentials */
+
   --popover: #1a1a1a;
   --popover-foreground: #ffffff;
 }
 
-/* Default button text color fallback */
+
 :root {
   --btn-text: #ffffff;
 }
@@ -97,7 +97,7 @@ body {
   transition: all 0.4s ease;
 }
 
-/* Custom Scrollbar */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -113,7 +113,7 @@ body {
   background: var(--brand-600);
 }
 
-/* For Firefox */
+
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;

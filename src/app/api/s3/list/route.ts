@@ -12,7 +12,7 @@ export async function GET() {
   try {
     const command = new ListObjectsV2Command({
       Bucket: bucketName,
-      Prefix: "", // List all
+      Prefix: "",
     });
 
     const response = await s3Client.send(command);
