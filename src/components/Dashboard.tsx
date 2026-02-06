@@ -49,38 +49,6 @@ export default function Dashboard() {
   };
 
 
-  const loadCSVLocal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setLoading(true);
-    const reader = new FileReader();
-    reader.onload = () => {
-      processCSVText(String(reader.result || ""), `Local: ${file.name}`);
-      setLoading(false);
-    };
-    reader.onerror = () => {
-      alert("Erro ao ler arquivo local");
-      setLoading(false);
-    };
-    reader.readAsText(file);
-  };
-
-
-  const loadExampleCSV = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/example-dados.csv");
-      if (!res.ok) throw new Error("Falha ao carregar exemplo");
-      const text = await res.text();
-      processCSVText(text, "Exemplo Local (dados.csv)");
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao carregar CSV de exemplo");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const processCSVText = (text: string, label: string) => {
     Papa.parse(text, {
@@ -131,13 +99,6 @@ export default function Dashboard() {
         <div className="controls">
           <S3Selector onSelect={loadCSVS3} selectedKey={selectedFile} onFileChange={setSelectedFile} />
 
-          <div className="control">
-            <label>CSV de Exemplo / Local</label>
-            <div className="inline">
-              <button className="btnGhost" onClick={loadExampleCSV}>Carregar Exemplo</button>
-              <input type="file" accept=".csv" onChange={loadCSVLocal} style={{ width: "auto", minWidth: "150px" }} />
-            </div>
-          </div>
         </div>
 
         <hr className="sep" />

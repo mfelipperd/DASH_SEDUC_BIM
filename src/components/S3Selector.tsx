@@ -70,7 +70,7 @@ export default function S3Selector({ onSelect, selectedKey, onFileChange }: Prop
           )}
         </select>
         <button onClick={() => onSelect(selectedKey)} disabled={!selectedKey || loading}>
-          {loading ? "..." : "Recarregar de S3"}
+          {loading ? "..." : "Carregar dados"}
         </button>
       </div>
     </div>
