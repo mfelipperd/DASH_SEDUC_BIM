@@ -36,7 +36,11 @@ export default function Dashboard() {
   const loadCSVS3 = async (key: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/s3/content?key=${encodeURIComponent(key)}`);
+      const res = await fetch(`/api/s3/content?key=${encodeURIComponent(key)}`, {
+        headers: {
+          "x-access-key": process.env.NEXT_PUBLIC_APP_READ_ONLY_KEY || "",
+        },
+      });
       if (!res.ok) throw new Error("Falha ao carregar arquivo");
       const text = await res.text();
       processCSVText(text, `S3: ${key}`);

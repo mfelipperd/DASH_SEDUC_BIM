@@ -22,7 +22,11 @@ export default function S3Selector({ onSelect, selectedKey, onFileChange }: Prop
     const fetchFiles = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/s3/list");
+        const res = await fetch("/api/s3/list", {
+          headers: {
+            "x-access-key": process.env.NEXT_PUBLIC_APP_READ_ONLY_KEY || "",
+          },
+        });
         const data = await res.json();
         if (data.files) {
           setFiles(data.files);

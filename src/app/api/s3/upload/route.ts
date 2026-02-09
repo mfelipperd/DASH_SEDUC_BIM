@@ -6,6 +6,11 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;
+    const accessKey = request.headers.get("x-access-key");
+
+    if (accessKey !== process.env.UPLOAD_ACCESS_KEY) {
+      return NextResponse.json({ error: "Unauthorized: Invalid or missing access key" }, { status: 401 });
+    }
 
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
